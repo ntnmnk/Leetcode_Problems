@@ -1,26 +1,29 @@
 class Solution {
     public int minDeletions(String s) {
-     Map<Character, Integer> charFrequency = new HashMap<>();
-    Set<Integer> uniqueFrequencies = new HashSet<>();
-
-            int deletions = 0;
-        // Count the frequency of each character
+            int[] freq = new int[26]; // Create an array to store character frequencies
+        
         for (char c : s.toCharArray()) {
-            charFrequency.put(c, charFrequency.getOrDefault(c, 0) + 1);
+            freq[c - 'a']++; // Count the frequency of each character
         }
-        // Iterate through the frequencies
-        for (int freq : charFrequency.values()) {
-            while (uniqueFrequencies.contains(freq)) {
-                // Increment deletions and reduce the frequency until it's unique
-                freq--;
-                deletions++;
+        
+        Arrays.sort(freq); // Sort frequencies in ascending order
+        
+        int del = 0; // Initialize the deletion count
+        
+        for (int i = 24; i >= 0; i--) {
+            if (freq[i] == 0) {
+                break; // No more characters with this frequency
             }
-            if (freq > 0) {
-                uniqueFrequencies.add(freq);
+            
+            if (freq[i] >= freq[i + 1]) {
+                int prev = freq[i];
+                freq[i] = Math.max(0, freq[i + 1] - 1);
+                del += prev - freq[i]; // Update the deletion count
             }
         }
+        
+        return del; // Return the minimum deletions required
 
-        return deletions;
 
 
    
