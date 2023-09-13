@@ -1,18 +1,19 @@
 class Solution {
     public int countKDifference(int[] nums, int k) {
-       Map<Integer,Integer> map=new HashMap<>();
-       int total =0;
-       for(int num:nums) {
-           if(map.containsKey(num-k)){
-               total+=map.get(num-k);
-           }
-           if(map.containsKey(num+k)){
-               total+=map.get(num+k);
-           }
-           map.put(num, map.getOrDefault(num, 0) + 1);
+              Map<Integer, Integer> numCount = new HashMap<>();
+        int count = 0;
 
-       }
-               return total;
+        for (int num : nums) {
+            // Check how many elements have a difference of 'k' with the current number
+            count += numCount.getOrDefault(num - k, 0);
+            count += numCount.getOrDefault(num + k, 0);
+
+            // Update the count of the current number in the map
+            numCount.put(num, numCount.getOrDefault(num, 0) + 1);
+        }
+
+        return count;
+
 
     }
 }
