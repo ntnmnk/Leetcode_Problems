@@ -3,15 +3,21 @@ class Solution {
            int n = points.length;
 
         // Create a min-heap to store edges along with their distances
-        PriorityQueue<int[]> minHeap = new PriorityQueue<>(Comparator.comparingInt(a -> a[2]));
+ PriorityQueue<int[]> minHeap = new PriorityQueue<>(Comparator.comparingInt(a -> a[2]));
 
         // Calculate the Manhattan distance between all pairs of points and add to the heap
-        for (int i = 0; i < n; i++) {
-            for (int j = i + 1; j < n; j++) {
-                int distance = Math.abs(points[i][0] - points[j][0]) + Math.abs(points[i][1] - points[j][1]);
-                minHeap.offer(new int[]{i, j, distance});
-            }
-        }
+       for (int i = 0; i < n; i++) {
+    for (int j = i + 1; j < n; j++) {
+        int x1 = points[i][0];
+        int y1 = points[i][1];
+        int x2 = points[j][0];
+        int y2 = points[j][1];
+
+        int distance = Math.abs(x1 - x2) + Math.abs(y1 - y2);
+        minHeap.offer(new int[]{i, j, distance});
+    }
+}
+
 
         // Initialize variables for Union-Find (Disjoint Set Union)
         int[] parent = new int[n];
