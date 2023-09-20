@@ -1,39 +1,34 @@
 class Solution {
-        private int countSoldiers(int[] row) {
-        int count = 0;
-        for (int value : row) {
-            if (value == 1) {
-                count++;
-            }
-        }
-        return count;
-    }
-
     public int[] kWeakestRows(int[][] mat, int k) {
-        int m = mat.length;
-        int n = mat[0].length;
+              PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[0] != b[0] ? b[0] - a[0] : b[1] - a[1]);
+        int[] ans = new int[k];
         
-        // Create an array of indices and initialize it with row numbers
-        Integer[] indices = new Integer[m];
-        for (int i = 0; i < m; i++) {
-            indices[i] = i;
+        for (int i = 0; i < mat.length; i++) {
+            pq.offer(new int[] {numOnes(mat[i]), i});
+            if (pq.size() > k)
+                pq.poll();
         }
         
-    // Sort the indices array based on custom comparator
-    Arrays.sort(indices, (row1, row2) -> {
-    int count1 = countSoldiers(mat[row1]);
-    int count2 = countSoldiers(mat[row2]);
-    return count1 != count2 ? Integer.compare(count1, count2) : Integer.compare(row1, row2);
-});
+        while (k > 0)
+            ans[--k] = pq.poll()[1];
+        
+        return ans;
+    }
+    
+    private int numOnes(int[] row) {
+        int lo = 0;
+        int hi = row.length;
+        
+        while (lo < hi) {
+            int mid = lo + (hi - lo) / 2;
+            
+            if (row[mid] == 1)
+                lo = mid + 1;
+            else
+                hi = mid;
+        }
+        
+        return lo;
 
-        
-        // Create the result array with the k weakest row indices
-        int[] result = new int[k];
-        for (int i = 0; i < k; i++) {
-            result[i] = indices[i];
-        }
-        
-        return result;
-   
     }
 }
