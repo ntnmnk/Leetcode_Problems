@@ -10,9 +10,9 @@ class Solution {
     for (right = 0; right < nums.length; right++) {
         currSum += nums[right];
 
-        while (left <= right && currSum > sum - x)
-            currSum -= nums[left++];
-
+        while (left <= right && currSum > sum - x){
+            currSum -= nums[left]; left++;
+        }
         if (currSum == sum - x)
             maxLength = Math.max(maxLength, right - left + 1);
     }
