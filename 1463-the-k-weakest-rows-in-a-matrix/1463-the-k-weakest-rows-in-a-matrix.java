@@ -19,8 +19,8 @@ class Solution {
             indices[i] = i;
         }
         
-        // Sort the indices array based on custom comparator
-       Arrays.sort(indices, (row1, row2) -> {
+    // Sort the indices array based on custom comparator
+    Arrays.sort(indices, (row1, row2) -> {
     int count1 = countSoldiers(mat[row1]);
     int count2 = countSoldiers(mat[row2]);
     return count1 != count2 ? Integer.compare(count1, count2) : Integer.compare(row1, row2);
