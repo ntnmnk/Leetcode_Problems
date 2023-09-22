@@ -1,20 +1,21 @@
 class Solution {
     public boolean isSubsequence(String s, String t) {
-       List<Integer>[] idx = new List[256]; // Just for clarity
-        for (int i = 0; i < t.length(); i++) {
-            if (idx[t.charAt(i)] == null)
-                idx[t.charAt(i)] = new ArrayList<>();
-            idx[t.charAt(i)].add(i);
-
-    }
-            int prev = 0;
-        for (int i = 0; i < s.length(); i++) {
-            if (idx[s.charAt(i)] == null) return false; // Note: char of S does NOT exist in T causing NPE
-            int j = Collections.binarySearch(idx[s.charAt(i)], prev);
-            if (j < 0) j = -j - 1;
-            if (j == idx[s.charAt(i)].size()) return false;
-            prev = idx[s.charAt(i)].get(j) + 1;
+            // Base case: if the s string is empty...
+        if(s.length() == 0)
+            return true;
+        // Initialize pointers for both strings
+        int i = 0;
+        int j = 0;
+        // We can iterate until either of them becomes zero...
+        while(i < s.length() && j < t.length()){
+            // Compare characters, increment i pointer...
+            if(s.charAt(i) == t.charAt(j)){
+                i++;
+            }j++;
+            // If the pointer is equal to the size of s, the match is found...
+            if(i == s.length()) return true;
         }
-        return true;
+        return false;       // Otherwise return false...
+  
 
 }}
