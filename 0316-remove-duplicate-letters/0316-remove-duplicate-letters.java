@@ -1,6 +1,6 @@
 class Solution {
     public String removeDuplicateLetters(String s) {
-        int[] count = new int[26]; // Store the count of each character
+           int[] count = new int[26]; // Store the count of each character
     boolean[] inResult = new boolean[26]; // Track if a character is in the result
     Stack<Character> stack = new Stack<>();
 
@@ -34,7 +34,6 @@ class Solution {
     }
 
     return result.toString();
-
-   
+     
     }
 }
