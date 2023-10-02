@@ -1,18 +1,34 @@
 class Solution {
     public boolean winnerOfGame(String colors) {
-        int alice = 0;
-        int bob = 0;
-        
-        for (int i = 1; i < colors.length() - 1; i++) {
-            if (colors.charAt(i - 1) == colors.charAt(i) && colors.charAt(i) == colors.charAt(i + 1)) {
-                if (colors.charAt(i) == 'A') {
-                    alice++;
-                } else {
-                    bob++;
-                }
-            }
+        if (colors.length() == 1 || colors.length() == 2)
+        return false;
+
+    int countA = 0;
+    int countB = 0;
+    int[] va = new int[colors.length() + 1];
+    va[1] = 0;
+    va[2] = 0;
+
+    for (int i = 3; i < va.length; i++) {
+        if (colors.charAt(i - 2) == 'A' && colors.charAt(i - 3) == 'A' && colors.charAt(i - 1) == 'A') {
+            va[i] = va[i - 1] + 1;
+        } else {
+            va[i] = va[i - 1];
         }
-        
-        return alice - bob >= 1;    
+    }
+    countA = va[colors.length()];
+
+    for (int i = 3; i < va.length; i++) {
+        if (colors.charAt(i - 2) == 'B' && colors.charAt(i - 3) == 'B' && colors.charAt(i - 1) == 'B') {
+            va[i] = va[i - 1] + 1;
+        } else {
+            va[i] = va[i - 1];
+        }
+    }
+    countB = va[colors.length()];
+
+    return countA > countB;
+
+
     }
 }
