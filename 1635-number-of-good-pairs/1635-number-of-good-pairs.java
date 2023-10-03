@@ -1,12 +1,17 @@
 class Solution {
     public int numIdenticalPairs(int[] nums) {
     Map<Integer,Integer> map =new HashMap<>();
-    int goodpairs=0;
-    for(int num:nums)    {
-        int count=map.getOrDefault(num,0);
-        goodpairs+=count;
-        map.put(num,count+1);
+    int goodPairs=0;
+        for (int i = 0; i < nums.length; i++) {
+        for (int j = i + 1; j < nums.length; j++) {
+            if (nums[i] == nums[j]) {
+                // Elements at indices i and j are equal, indicating a good pair
+                goodPairs++;
+            }
+        }
     }
-    return goodpairs;
+
+    return goodPairs;
+
     }
 }
