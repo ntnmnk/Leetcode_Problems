@@ -9,66 +9,59 @@
  
 class Solution {
     public int findInMountainArray(int target, MountainArray mountainArr) {
-               // Save the length of the mountain array
-        int length = mountainArr.length();
+             int peakIndex = findPeak(mountainArr, 0, mountainArr.length() - 1, target);
+        if (peakIndex == -1) {
+            return -1; // Peak not found
+        }
+        int ascendingIndex = findAscending(mountainArr, target, 0, peakIndex);
+        if (ascendingIndex != -1) {
+            return ascendingIndex;
+        }
+        return findDescending(mountainArr, target, peakIndex, mountainArr.length() - 1);
+    }
 
-        // 1. Find the index of the peak element
-        int low = 1;
-        int high = length - 2;
-        while (low != high) {
-            int testIndex = (low + high) >> 1;
-            int curr = mountainArr.get(testIndex);
-            int next = mountainArr.get(testIndex + 1);
-            
-            if (curr < next) {
-                if (curr == target) {
-                    return testIndex;
-                }
-                if (next == target) {
-                    return testIndex + 1;
-                }
-                low = testIndex + 1;
+    private int findPeak(MountainArray mountainArr, int left, int right, int target) {
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            int midValue = mountainArr.get(mid);
+            int midPlusOneValue = mountainArr.get(mid + 1);
+            if (midValue < midPlusOneValue) {
+                left = mid + 1;
             } else {
-                high = testIndex;
+                right = mid;
             }
         }
-        int peakIndex = low;
+        return left;
+    }
 
-        // 2. Search in the strictly increasing part of the array
-        // If found, will be returned in the loop itself.
-        low = 0;
-        high = peakIndex;
-        while (low <= high) {
-            int testIndex = (low + high) >> 1;
-            int curr = mountainArr.get(testIndex);
-                
-            if (curr == target) {
-                return testIndex;
-            } else if (curr < target) {
-                low = testIndex + 1;
+    private int findAscending(MountainArray mountainArr, int target, int left, int right) {
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            int midValue = mountainArr.get(mid);
+            if (midValue == target) {
+                return mid;
+            } else if (midValue < target) {
+                left = mid + 1;
             } else {
-                high = testIndex - 1;
+                right = mid - 1;
             }
         }
-
-        // 3. Search in the strictly decreasing part of the array
-        // If found, will be returned in the loop itself.
-        low = peakIndex + 1;
-        high = length - 1;
-        while (low <= high) {
-            int testIndex = (low + high) >> 1;
-            int curr = mountainArr.get(testIndex);
-                
-            if (curr == target) {
-                return testIndex;
-            } else if (curr > target) {
-                low = testIndex + 1;
-            } else {
-                high = testIndex - 1;
-            }
-        }
-
-        // Target is not present in the mountain array
         return -1;
+    }
+
+    private int findDescending(MountainArray mountainArr, int target, int left, int right) {
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            int midValue = mountainArr.get(mid);
+            if (midValue == target) {
+                return mid;
+            } else if (midValue < target) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return -1;
+   
     }
 }
