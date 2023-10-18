@@ -1,26 +1,64 @@
 class Solution {
     public int[] getOrder(int[][] tasks) {
-            PriorityQueue<Task> taskQueue = new PriorityQueue<>((x,y)-> x.enqueueTime-y.enqueueTime), availableQueue = new PriorityQueue<>((x,y)->x.processingTime!=y.processingTime ? x.processingTime-y.processingTime : x.index-y.index);
-        int[] result = new int[tasks.length];
-        for(int i=0;i<tasks.length;i++) taskQueue.offer(new Task(i, tasks[i][0], tasks[i][1]));
-        int index=0, currentTime = taskQueue.peek().enqueueTime;
-        while(!taskQueue.isEmpty() || !availableQueue.isEmpty()) {
-            while(!taskQueue.isEmpty() && taskQueue.peek().enqueueTime <= currentTime)
-                availableQueue.offer(taskQueue.poll());
-            if(!availableQueue.isEmpty()) {
-                currentTime = currentTime + availableQueue.peek().processingTime;
-                result[index++] = availableQueue.poll().index;
-            } else currentTime = taskQueue.peek().enqueueTime;
+             Comparator<Task> processingTimeThenIndex = Comparator
+				.comparingInt(Task::getProcessingTime)
+                .thenComparingInt(Task::getIndex);
+        Queue<Task> allTasks = new PriorityQueue<>(
+                Comparator.comparingInt(Task::getEnqueueTime).thenComparing(processingTimeThenIndex)
+        );
+        Queue<Task> availableTasks = new PriorityQueue<>(processingTimeThenIndex);
+        for (int i = 0, tasksLength = tasks.length; i < tasksLength; i++) {
+            int[] taskInfo = tasks[i];
+            Task task = new Task(taskInfo[0], taskInfo[1], i);
+            allTasks.offer(task);
         }
-        return result;
+        int virtualTime = 0;
+        int orderCounter = 0;
+        int[] order = new int[tasks.length];
+        while (!allTasks.isEmpty() || !availableTasks.isEmpty()) {
+            final Task nextTask;
+            if (availableTasks.isEmpty()) {
+                nextTask = allTasks.poll();
+                virtualTime = nextTask.getEnqueueTime();
+            } else {
+                nextTask = availableTasks.poll();
+            }
+            order[orderCounter++] = nextTask.getIndex();
+            virtualTime += nextTask.getProcessingTime();
+            while (!allTasks.isEmpty() && allTasks.peek().getEnqueueTime() <= virtualTime) {
+                availableTasks.offer(allTasks.poll());
+            }
+        }
+        return order;
     }
 }
+
 class Task {
-    int index,enqueueTime,processingTime;
-    public Task(int index, int enqueueTime, int processingTime) {
-        this.index = index;
+    final int enqueueTime;
+    final int processingTime;
+    final int index;
+
+    public Task(
+            final int enqueueTime,
+            final int processingTime,
+            final int index) {
         this.enqueueTime = enqueueTime;
         this.processingTime = processingTime;
+        this.index = index;
     }
-    
+
+    public int getEnqueueTime() {
+        return enqueueTime;
     }
+
+    public int getProcessingTime() {
+        return processingTime;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+   
+    }
+
+
