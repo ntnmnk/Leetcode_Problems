@@ -1,35 +1,50 @@
 class Solution {
     public int[] getOrder(int[][] tasks) {
-             Comparator<Task> processingTimeThenIndex = Comparator
-				.comparingInt(Task::getProcessingTime)
-                .thenComparingInt(Task::getIndex);
+              // Create a comparator for tasks, first by processing time, then by index
+        Comparator<Task> processingTimeThenIndex = Comparator
+            .comparingInt(Task::getProcessingTime)
+            .thenComparingInt(Task::getIndex);
+        
+        // Use two priority queues for task management
+        // allTasks contains all tasks and is sorted by enqueue time, processing time, and index
         Queue<Task> allTasks = new PriorityQueue<>(
-                Comparator.comparingInt(Task::getEnqueueTime).thenComparing(processingTimeThenIndex)
+            Comparator.comparingInt(Task::getEnqueueTime).thenComparing(processingTimeThenIndex)
         );
+        // availableTasks contains currently available tasks and is sorted by processing time and index
         Queue<Task> availableTasks = new PriorityQueue<>(processingTimeThenIndex);
-        for (int i = 0, tasksLength = tasks.length; i < tasksLength; i++) {
+
+        // Add tasks to the allTasks queue
+        for (int i = 0; i < tasks.length; i++) {
             int[] taskInfo = tasks[i];
             Task task = new Task(taskInfo[0], taskInfo[1], i);
             allTasks.offer(task);
         }
+
         int virtualTime = 0;
         int orderCounter = 0;
         int[] order = new int[tasks.length];
+
         while (!allTasks.isEmpty() || !availableTasks.isEmpty()) {
-            final Task nextTask;
+            Task nextTask;
             if (availableTasks.isEmpty()) {
+                // If there are no available tasks, pick the next task from allTasks
                 nextTask = allTasks.poll();
                 virtualTime = nextTask.getEnqueueTime();
             } else {
+                // Pick the next available task
                 nextTask = availableTasks.poll();
             }
             order[orderCounter++] = nextTask.getIndex();
             virtualTime += nextTask.getProcessingTime();
+
+            // Add tasks that become available to the availableTasks queue
             while (!allTasks.isEmpty() && allTasks.peek().getEnqueueTime() <= virtualTime) {
                 availableTasks.offer(allTasks.poll());
             }
         }
+
         return order;
+
     }
 }
 
