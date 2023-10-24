@@ -1,24 +1,27 @@
 class Solution {
     public int firstMissingPositive(int[] nums) {
-          int n = nums.length;
-    Set<Integer> set = new HashSet<>();
 
-    // Step 1: Add all positive integers to the set
-    for (int num : nums) {
-        if (num > 0) {
-            set.add(num);
+        int n = nums.length;
+        for (int i = 0; i < n; ++i) {
+            while (nums[i] >= 1 && nums[i] <= n && nums[i] != nums[nums[i] - 1]) {
+                swap(nums, i, nums[i] - 1);
+            }
         }
+
+        for (int i = 0; i < n; ++i) {
+            if (nums[i] != i + 1) {
+                return i + 1;
+            }
+        }
+
+        return n + 1;
     }
 
-    // Step 2: Find the smallest missing positive integer
-    for (int i = 1; i <= n; i++) {
-        if (!set.contains(i)) {
-            return i;
-        }
+    private void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
     }
-
-    // If all positive integers from 1 to n are present, return n + 1
-    return n + 1;
-
-
-}}
+}
+  
+    
