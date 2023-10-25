@@ -1,29 +1,22 @@
 class Solution {
     public int countPairs(int[] deliciousness) {
-            final int MOD = 1000000007;
-        int maxDeliciousness = 0;
-        for (int d : deliciousness) {
-            maxDeliciousness = Math.max(maxDeliciousness, d);
+               int[] target = new int[22];
+        for (int i = 0; i < 22; i++) {
+            target[i] = 1 << i;
         }
-
-        int maxSum = maxDeliciousness * 2;
-        long count = 0;
-        Map<Integer, Integer> deliciousnessCount = new HashMap<>();
-
-        for (int d : deliciousness) {
-            for (int i = 0; i <= 21; i++) {  // Iterate up to 2^21
-                int target = (1 << i);
-                int complement = target - d;
-                if (deliciousnessCount.containsKey(complement)) {
-                    count = (count + deliciousnessCount.get(complement)) % MOD;
-                }
+        long ans = 0;
+        Map<Integer, Integer> dp = new HashMap<>();
+        
+        for (int candidate : deliciousness) {
+            for (int miniTarget : target) {
+                int complement = miniTarget - candidate;
+                ans += dp.getOrDefault(complement, 0);
             }
-            deliciousnessCount.put(d, deliciousnessCount.getOrDefault(d, 0) + 1);
+            dp.put(candidate, dp.getOrDefault(candidate, 0) + 1);
         }
+        
+        return (int)(ans % 1_000_000_007);         
 
-        return (int) count;
-
-
-   
+    
     }
 }
