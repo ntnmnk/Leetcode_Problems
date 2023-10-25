@@ -1,21 +1,25 @@
 class Solution {
     public int countPairs(int[] deliciousness) {
-               int[] target = new int[22];
-        for (int i = 0; i < 22; i++) {
-            target[i] = 1 << i;
+            TreeMap<Integer, Integer> cnt = new TreeMap<>();
+        for (int d : deliciousness) {
+            cnt.put(d, 1 + cnt.getOrDefault(d, 0));
         }
         long ans = 0;
-        Map<Integer, Integer> dp = new HashMap<>();
-        
-        for (int candidate : deliciousness) {
-            for (int miniTarget : target) {
-                int complement = miniTarget - candidate;
-                ans += dp.getOrDefault(complement, 0);
+        while (!cnt.isEmpty()) {
+            var e = cnt.pollLastEntry();
+            int key = e.getKey(), v = e.getValue(), p = 1;
+            while (p <= key) {
+                p <<= 1;
             }
-            dp.put(candidate, dp.getOrDefault(candidate, 0) + 1);
+            if (Integer.bitCount(key) == 1) {
+                ans += 1L * v * cnt.getOrDefault(0, 0);    
+                ans += (v - 1L) * v / 2;   
+            }else if (cnt.containsKey(p - key)) {
+                ans += 1L * v * cnt.get(p - key);
+            }
         }
-        
         return (int)(ans % 1_000_000_007);         
+      
 
     
     }
