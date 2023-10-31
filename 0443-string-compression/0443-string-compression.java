@@ -1,29 +1,38 @@
 class Solution {
     public int compress(char[] chars) {
-         int indexAns = 0;
-    int index = 0;
+    if (chars == null || chars.length == 0) {
+        return 0;
+    }
 
-    while (index < chars.length) {
-        char currentChar = chars[index];
-        int count = 0;
+    // Create a hashmap to count character occurrences
+    HashMap<Character, Integer> charCount = new HashMap<>();
 
-        while (index < chars.length && chars[index] == currentChar) {
-            index++;
-            count++;
-        }
+    int n = chars.length;
+    int write = 0; // Pointer for writing compressed characters
 
-        chars[indexAns++] = currentChar;
+    for (int read = 0; read < n; read++) {
+        char currentChar = chars[read];
+        
+        // Update the character count in the hashmap
+        charCount.put(currentChar, charCount.getOrDefault(currentChar, 0) + 1);
 
-        if (count > 1) {
-            String countStr = String.valueOf(count);
-            for (char c : countStr.toCharArray()) {
-                chars[indexAns++] = c;
+        if (read == n - 1 || chars[read] != chars[read + 1]) {
+            chars[write++] = currentChar; // Write the character
+
+            int count = charCount.get(currentChar);
+            if (count > 1) {
+                char[] countChars = Integer.toString(count).toCharArray();
+                for (char c : countChars) {
+                    chars[write++] = c;
+                }
             }
+
+            // Clear the character count in the hashmap
+            charCount.remove(currentChar);
         }
     }
 
-    return indexAns;
-
-   
+    return write;
+        
     }
 }
