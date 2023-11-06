@@ -1,32 +1,20 @@
 class SeatManager {
-       private int n;
-    private TreeSet<Integer> availableSeats;
-
+    	TreeMap<Integer,Boolean> map;
     public SeatManager(int n) {
-        this.n = n;
-        availableSeats = new TreeSet<>();
-        for (int seatNumber = 1; seatNumber <= n; seatNumber++) {
-            availableSeats.add(seatNumber);
-        }
+        map = new TreeMap<>();
+        for(int i = 1;i<=n;i++)
+            map.put(i,true);
     }
 
     public int reserve() {
-        if (!availableSeats.isEmpty()) {
-            int seatToReserve = availableSeats.first();
-            availableSeats.remove(seatToReserve);
-            return seatToReserve;
-        }
-        return -1; // No available seats.
+        return map.pollFirstEntry().getKey();
     }
 
     public void unreserve(int seatNumber) {
-        if (seatNumber >= 1 && seatNumber <= n) {
-            availableSeats.add(seatNumber);
-        }
-    }
+        map.put(seatNumber,true);
 
 }
-
+}
 /**
  * Your SeatManager object will be instantiated and called as such:
  * SeatManager obj = new SeatManager(n);
