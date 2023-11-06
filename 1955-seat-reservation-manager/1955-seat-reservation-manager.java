@@ -1,26 +1,30 @@
 class SeatManager {
-     private PriorityQueue<Integer> availableSeats;
+       private int n;
+    private TreeSet<Integer> availableSeats;
 
     public SeatManager(int n) {
-           availableSeats = new PriorityQueue<>();
+        this.n = n;
+        availableSeats = new TreeSet<>();
         for (int seatNumber = 1; seatNumber <= n; seatNumber++) {
-            availableSeats.offer(seatNumber);
+            availableSeats.add(seatNumber);
         }
-     
     }
-    
+
     public int reserve() {
-             if (!availableSeats.isEmpty()) {
-            return availableSeats.poll();
+        if (!availableSeats.isEmpty()) {
+            int seatToReserve = availableSeats.first();
+            availableSeats.remove(seatToReserve);
+            return seatToReserve;
         }
         return -1; // No available seats.
-   
     }
-    
+
     public void unreserve(int seatNumber) {
-             availableSeats.offer(seatNumber);
-   
+        if (seatNumber >= 1 && seatNumber <= n) {
+            availableSeats.add(seatNumber);
+        }
     }
+
 }
 
 /**
