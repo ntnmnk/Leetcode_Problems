@@ -1,60 +1,71 @@
 class MyHashMap {
-    private static final int INITIAL_CAPACITY = 1000;
-    private LinkedList<Entry>[] buckets;
+    private int size = 500;
+    private Node[] nodeHeads = new Node[size];
+    private class Node {
+        Node next;
+        int key;
+        int val;
+        Node(int key, int val){
+            this.key = key;
+            this.val = val;
+        }
+    }
 
     public MyHashMap() {
-        buckets = new LinkedList[INITIAL_CAPACITY];
-        for (int i = 0; i < INITIAL_CAPACITY; i++) {
-            buckets[i] = new LinkedList<>();
-        }
+
     }
 
     public void put(int key, int value) {
-        int index = key % INITIAL_CAPACITY;
-        LinkedList<Entry> bucket = buckets[index];
-        for (Entry entry : bucket) {
-            if (entry.key == key) {
-                entry.value = value; // Update the existing value.
+        int index = hash(key);
+        Node temp = nodeHeads[index];
+        if (temp == null){
+            nodeHeads[index] = new Node(key, value);
+            return;
+        }
+        Node prev = temp;
+        while (temp != null){
+            if (temp.key == key){
+                temp.val = value;
                 return;
             }
+            prev = temp;
+            temp = temp.next;
         }
-        bucket.add(new Entry(key, value));
+        prev.next = new Node(key,value);
     }
 
     public int get(int key) {
-        int index = key % INITIAL_CAPACITY;
-        LinkedList<Entry> bucket = buckets[index];
-        for (Entry entry : bucket) {
-            if (entry.key == key) {
-                return entry.value; // Key found, return the corresponding value.
+        int index = hash(key);
+        Node temp = nodeHeads[index];
+        while (temp != null ){
+            if (temp.key == key){
+                return temp.val;
             }
+            temp = temp.next;
         }
-        return -1; // Key not found.
+        return -1;
     }
 
     public void remove(int key) {
-        int index = key % INITIAL_CAPACITY;
-        LinkedList<Entry> bucket = buckets[index];
-        Entry entryToRemove = null;
-        for (Entry entry : bucket) {
-            if (entry.key == key) {
-                entryToRemove = entry;
-                break;
-            }
+        int index = hash(key);
+        Node temp = nodeHeads[index];
+        if (temp == null){
+            return;
         }
-        if (entryToRemove != null) {
-            bucket.remove(entryToRemove);
+        if (temp.key == key){
+            nodeHeads[index] = nodeHeads[index].next;
+        }
+        while (temp.next != null ){
+            if (temp.next.key == key){
+                temp.next = temp.next.next;
+                return;
+            }
+            temp = temp.next;
         }
     }
-
-    private static class Entry {
-        int key;
-        int value;
-
-        Entry(int key, int value) {
-            this.key = key;
-            this.value = value;
-        }
+    
+    private int hash(int key){
+        return key % size;
     }
 
 }
