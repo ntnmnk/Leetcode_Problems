@@ -1,71 +1,87 @@
 class MyHashMap {
-    private int size = 50000;
-    private Node[] nodeHeads = new Node[size];
-    private class Node {
-        Node next;
-        int key;
-        int val;
-        Node(int key, int val){
-            this.key = key;
-            this.val = val;
-        }
-    }
+    private static  int INITIAL_CAPACITY = 16; // Initial capacity of the array
+    private static  double LOAD_FACTOR = 0.75; // Load factor threshold for resizing
+
+    private int size; // Number of key-value pairs in the hashmap
+    private List<Entry>[] buckets;
 
     public MyHashMap() {
-
+        size = 0;
+        buckets = new ArrayList[INITIAL_CAPACITY];
+        for (int i = 0; i < INITIAL_CAPACITY; i++) {
+            buckets[i] = new ArrayList<>();
+        }
     }
 
     public void put(int key, int value) {
-        int index = hash(key);
-        Node temp = nodeHeads[index];
-        if (temp == null){
-            nodeHeads[index] = new Node(key, value);
-            return;
-        }
-        Node prev = temp;
-        while (temp != null){
-            if (temp.key == key){
-                temp.val = value;
+        int index = key % INITIAL_CAPACITY;
+        List<Entry> bucket = buckets[index];
+        for (Entry entry : bucket) {
+            if (entry.key == key) {
+                entry.value = value; // Update the existing value.
                 return;
             }
-            prev = temp;
-            temp = temp.next;
         }
-        prev.next = new Node(key,value);
+        bucket.add(new Entry(key, value));
+        size++;
+
+        // Check if resizing is needed
+        if ((double)size / INITIAL_CAPACITY > LOAD_FACTOR) {
+            resize();
+        }
     }
 
     public int get(int key) {
-        int index = hash(key);
-        Node temp = nodeHeads[index];
-        while (temp != null ){
-            if (temp.key == key){
-                return temp.val;
+        int index = key % INITIAL_CAPACITY;
+        List<Entry> bucket = buckets[index];
+        for (Entry entry : bucket) {
+            if (entry.key == key) {
+                return entry.value;
             }
-            temp = temp.next;
         }
-        return -1;
+        return -1; // Key not found.
     }
 
     public void remove(int key) {
-        int index = hash(key);
-        Node temp = nodeHeads[index];
-        if (temp == null){
-            return;
-        }
-        if (temp.key == key){
-            nodeHeads[index] = nodeHeads[index].next;
-        }
-        while (temp.next != null ){
-            if (temp.next.key == key){
-                temp.next = temp.next.next;
+        int index = key % INITIAL_CAPACITY;
+        List<Entry> bucket = buckets[index];
+        for (Entry entry : bucket) {
+            if (entry.key == key) {
+                bucket.remove(entry);
+                size--;
                 return;
             }
-            temp = temp.next;
         }
     }
-    
-    private int hash(int key){
-        return key % size;
+
+    private void resize() {
+        int newCapacity = INITIAL_CAPACITY * 2;
+        List<Entry>[] newBuckets = new ArrayList[newCapacity];
+        for (int i = 0; i < newCapacity; i++) {
+            newBuckets[i] = new ArrayList<>();
+        }
+
+        // Rehash and redistribute the entries
+        for (List<Entry> bucket : buckets) {
+            for (Entry entry : bucket) {
+                int newIndex = entry.key % newCapacity;
+                newBuckets[newIndex].add(entry);
+            }
+        }
+
+        // Update the hashmap's data
+        buckets = newBuckets;
+        INITIAL_CAPACITY = newCapacity;
+    }
+
+    private static class Entry {
+        int key;
+        int value;
+
+        Entry(int key, int value) {
+            this.key = key;
+            this.value = value;
+        }
     }
 
 }
