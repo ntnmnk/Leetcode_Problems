@@ -1,5 +1,5 @@
 class MyHashMap {
-    private int size = 500;
+    private int size = 50000;
     private Node[] nodeHeads = new Node[size];
     private class Node {
         Node next;
